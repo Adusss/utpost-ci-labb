@@ -1,0 +1,29 @@
+name: ci_test
+permissions:
+  contents: read
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: "npm run format:check"
+      - run: npm run test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v7
+        with:
+          path: client/dist
